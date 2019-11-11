@@ -23,6 +23,9 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
+        permissions = [
+            ('can_have_piece_of_pizza', 'Может съесть кусочек пиццы'),
+        ]
 
 
 ORDER_STATUS_CHOICES = (
