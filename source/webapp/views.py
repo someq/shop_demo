@@ -22,7 +22,7 @@ class ProductCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'product/create.html'
     fields = ('name', 'category', 'price', 'photo')
     success_url = reverse_lazy('webapp:index')
-    permission_required = 'webapp.add_product'
+    permission_required = 'webapp.add_product', 'webapp.can_have_piece_of_pizza'
     permission_denied_message = '403 Доступ запрещён!'
 
 
