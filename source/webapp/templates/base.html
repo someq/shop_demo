@@ -40,6 +40,7 @@
     </div>
 </nav>
 <div class="container mt-3 mb-3">
+    {% include 'partial/messages.html' %}
     {% block content %}{% endblock %}
 </div>
 <script src="{% static 'js/jquery.min.js' %}"></script>

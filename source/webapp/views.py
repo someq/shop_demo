@@ -5,6 +5,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView, CreateView
 from webapp.models import Product, OrderProduct, Order
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib import messages
 
 
 class IndexView(ListView):
@@ -67,6 +68,7 @@ class BasketView(CreateView):
         response = super().form_valid(form)
         self._save_order_products()
         self._clean_basket()
+        messages.success(self.request, 'Заказ оформлен!')
         return response
 
     def _prepare_basket(self):
