@@ -6,19 +6,20 @@ from django.views.generic import ListView, DetailView, CreateView
 from webapp.models import Product, OrderProduct, Order
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
+from webapp.mixins import StatisticsMixin
 
 
-class IndexView(ListView):
+class IndexView(StatisticsMixin, ListView):
     model = Product
     template_name = 'index.html'
 
 
-class ProductView(DetailView):
+class ProductView(StatisticsMixin, DetailView):
     model = Product
     template_name = 'product/detail.html'
 
 
-class ProductCreateView(PermissionRequiredMixin, CreateView):
+class ProductCreateView(PermissionRequiredMixin, StatisticsMixin, CreateView):
     model = Product
     template_name = 'product/create.html'
     fields = ('name', 'category', 'price', 'photo')
@@ -27,7 +28,7 @@ class ProductCreateView(PermissionRequiredMixin, CreateView):
     permission_denied_message = '403 Доступ запрещён!'
 
 
-class BasketChangeView(View):
+class BasketChangeView(StatisticsMixin, View):
     def get(self, request, *args, **kwargs):
         products = request.session.get('products', [])
 
@@ -49,7 +50,7 @@ class BasketChangeView(View):
         return redirect(next_url)
 
 
-class BasketView(CreateView):
+class BasketView(StatisticsMixin, CreateView):
     model = Order
     fields = ('first_name', 'last_name', 'phone', 'email')
     template_name = 'product/basket.html'
