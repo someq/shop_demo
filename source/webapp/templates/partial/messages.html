@@ -1,16 +1,9 @@
+{% load message_classes %}
 {% if messages %}
     {% for message in messages %}
-        <div class="alert alert-dismissible fade show {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-            alert-danger
-        {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
-            alert-warning
-        {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-            alert-success
-        {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
-            alert-primary
-        {% else %}
-            alert-secondary
-        {% endif %}" role="alert">
+        <div class="alert alert-dismissible fade show {{ message|get_class_filter }}" role="alert">
+        {# или так: #}
+        {# <div class="alert alert-dismissible fade show {% get_class_tag message %}" role="alert"> #}
             {{ message }}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
