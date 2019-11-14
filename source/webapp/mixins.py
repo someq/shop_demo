@@ -19,7 +19,7 @@ from django.views.generic import View
 # last_time - хранит время посещения предыдущей страницы, чтобы считать разницу от текущего.
 
 
-class StatsMixin(View):
+class StatsMixin():
     def get(self, request, *args, **kwargs):
         self.update_page_visits()
         self.update_visits_total()
