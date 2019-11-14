@@ -162,3 +162,38 @@ class OrderDetailView(DetailView):
         if self.request.user.has_perm('webapp:view_order'):
             return Order.objects.all()
         return self.request.user.orders.all()
+
+
+class OrderCreateView(CreateView):
+    model = Order
+    pass
+
+
+class OrderUpdateView(UpdateView):
+    model = Order
+    pass
+
+
+class OrderDeliverView(View):
+    def get(self, request, *args, **kwargs):
+        pass
+
+
+class OrderCancelView(View):
+    def get(self, request, *args, **kwargs):
+        pass
+
+
+class OrderProductCreateView(CreateView):
+    model = OrderProduct
+    pass
+
+
+class OrderProductUpdateView(UpdateView):
+    model = OrderProduct
+    pass
+
+
+class OrderProductDeleteView(DeleteView):
+    model = OrderProduct
+    pass
