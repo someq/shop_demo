@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
 
-
 CATEGORY_CHOICES = (
     ('other', 'Другое'),
     ('food', 'Еда'),
@@ -29,10 +28,11 @@ class Product(models.Model):
 
 
 ORDER_STATUS_CHOICES = (
-   ('new', 'Новый'),
-   ('payed', 'Оплачен'),
-   ('processing', 'Обработка'),
-   ('delivered', 'Доставлен')
+    ('new', 'Новый'),
+    ('payed', 'Оплачен'),
+    ('processing', 'Обработка'),
+    ('delivered', 'Доставлен'),
+    ('canceled', 'Отменён')
 )
 
 
