@@ -1,9 +1,57 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
 
 {% block content %}
     <h1 class="text-center">Добавить заказ</h1>
     <form method="post" action="{% url 'webapp:order_create' %}">
         {% include 'partial/form.html' %}
-        <button type="submit" class="btn btn-primary">Добавить</button>
+        <h3 class="text-center my-3">Товары</h3>
+
+        {{ formset.management_form }}
+
+        {% for error in formset.non_form_errors %}
+            <p class="text-danger">{{ error }}</p>
+        {% endfor %}
+
+        <div id="product_forms">
+            {% for product_form in formset %}
+                <div class="form-row" id="form-{{ forloop.counter0 }}">
+                    <div class="form-group col-md-5">
+                        {% include 'partial/form_field.html' with field=product_form.product %}
+                    </div>
+                    <div class="form-group col-md-5">
+                        {% include 'partial/form_field.html' with field=product_form.amount %}
+                    </div>
+                    <div class="form-group col-md-2">
+                        <button type="button" class="btn btn-danger" data-id="#form-{{ forloop.counter0 }}">Удалить товар</button>
+                    </div>
+                    {{ product_form.id }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group text-center">
+            <button type="button" id="add_product_form" class="btn btn-success">Добавить ещё товар</button>
+        </div>
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
     </form>
+{% endblock %}
+
+{% block scripts %}
+    <script type="application/javascript">
+        // Добавлено в качестве примера, как передать переменные из контекста Django в JS.
+        // (нужно вывести их в шаблоне внутри js-кода внутри тега <script> так,
+        // чтобы после рендера получился валидный код на js со значениями этих переменных.)
+        // Последующие скрипты будут иметь доступ к этим переменным после того, как загрузятся.
+        let productOptions = {
+            {% for product in product_list %}
+            {{ product.pk }}: "{{ product.name }}"{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        };
+    </script>
+
+    <script type="application/javascript" src="{% static "js/product_formset.js" %}"></script>
 {% endblock %}

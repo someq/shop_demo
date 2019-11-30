@@ -1,14 +1,14 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse, redirect, get_object_or_404
-
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-
-from webapp.forms import BasketOrderCreateForm, ManualOrderForm, OrderProductForm
-from webapp.models import Product, OrderProduct, Order, ORDER_STATUS_DELIVERED, ORDER_STATUS_CANCELED
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib import messages
+
+from webapp.forms import BasketOrderCreateForm, ManualOrderForm, OrderProductForm, \
+    ProductsCreateFormset, ProductsUpdateFormset
+from webapp.models import Product, OrderProduct, Order, ORDER_STATUS_DELIVERED, ORDER_STATUS_CANCELED
 from webapp.mixins import StatsMixin
 
 
@@ -172,6 +172,30 @@ class OrderCreateView(PermissionRequiredMixin, CreateView):
     form_class = ManualOrderForm
     template_name = 'order/create.html'
     permission_required = 'webapp.add_order'
+
+    def get_context_data(self, **kwargs):
+        if 'formset' not in kwargs:
+            kwargs['formset'] = ProductsCreateFormset(queryset=OrderProduct.objects.none())
+        kwargs['product_list'] = Product.objects.filter(in_order=True)
+        return super().get_context_data(**kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form = self.get_form()
+        formset = ProductsCreateFormset(data=request.POST)
+        if form.is_valid() and formset.is_valid():
+            return self.form_valid(form, formset)
+        return self.form_invalid(form, formset)
+
+    def form_valid(self, form, formset):
+        self.object = form.save()
+        for form in formset.forms:
+            form.instance.order = self.object
+        formset.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form, formset):
+        return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
     def get_success_url(self):
         return reverse('webapp:order_detail', kwargs={'pk': self.object.pk})
