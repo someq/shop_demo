@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMix
 from django.contrib import messages
 
 from webapp.forms import BasketOrderCreateForm, ManualOrderForm, OrderProductForm, \
-    ProductsCreateFormset, ProductsUpdateFormset
+    ProductsFormset
 from webapp.models import Product, OrderProduct, Order, ORDER_STATUS_DELIVERED, ORDER_STATUS_CANCELED
 from webapp.mixins import StatsMixin
 
@@ -175,22 +175,21 @@ class OrderCreateView(PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         if 'formset' not in kwargs:
-            kwargs['formset'] = ProductsCreateFormset(queryset=OrderProduct.objects.none())
+            kwargs['formset'] = ProductsFormset()
         kwargs['product_list'] = Product.objects.filter(in_order=True)
         return super().get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
         self.object = None
         form = self.get_form()
-        formset = ProductsCreateFormset(data=request.POST)
+        formset = ProductsFormset(data=request.POST)
         if form.is_valid() and formset.is_valid():
             return self.form_valid(form, formset)
         return self.form_invalid(form, formset)
 
     def form_valid(self, form, formset):
         self.object = form.save()
-        for form in formset.forms:
-            form.instance.order = self.object
+        formset.instance = self.object
         formset.save()
         return HttpResponseRedirect(self.get_success_url())
 
