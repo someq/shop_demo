@@ -133,3 +133,15 @@ MEDIA_ROOT = 'uploads'
 
 LOGIN_REDIRECT_URL = reverse_lazy('webapp:index')
 LOGOUT_REDIRECT_URL = reverse_lazy('webapp:index')
+
+
+# Rest Framework
+
+REST_FRAMEWORK = {
+    # Если это включить, то DRF будет сразу выводить JSON,
+    # без графического интерфейса.
+
+    # 'DEFAULT_RENDERER_CLASSES': (
+    #     'rest_framework.renderers.JSONRenderer',
+    # )
+}
