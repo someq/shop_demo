@@ -6,7 +6,7 @@ from .serializers import ProductSerializer, OrderSerializer, OrderProductSeriali
     UserRegisterSerializer
 from webapp.models import Product, Order, OrderProduct
 from rest_framework.permissions import SAFE_METHODS, AllowAny, \
-    DjangoModelPermissions
+    DjangoModelPermissions, BasePermission
 
 
 class LogoutView(APIView):
@@ -34,6 +34,13 @@ class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = [DjangoModelPermissions]
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.has_perm('webapp.change_order'):
+            return Order.objects.all()
+        else:
+            return Order.objects.filter(user=user)
 
 
 class OrderProductViewSet(viewsets.ModelViewSet):
