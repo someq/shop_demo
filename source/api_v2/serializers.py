@@ -1,4 +1,7 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from webapp.models import Product, Order, OrderProduct, CATEGORY_CHOICES
 
 
@@ -49,3 +52,55 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ('id', 'user', 'first_name', 'last_name', 'phone', 'email',
                   'products', 'status', 'created_at', 'updated_at')
+
+
+class PasswordValidator:
+    def __init__(self, length):
+        self.length = length
+
+    def __call__(self, value):
+        if len(value) < self.length:
+            raise ValidationError(f'Пароль должен быть длинее {self.length} символов')
+        return value
+
+
+def password_validator(value):
+    if len(value) < 8:
+        raise ValidationError('Пароль должен быть длинее 8 символов')
+    return value
+
+
+class UserRegisterSerializer(serializers.ModelSerializer):
+    password_confirm = serializers.CharField(max_length=128, source='password', write_only=True, required=True,
+                                             # валидатор в виде функции или объекта класса
+                                             validators=[password_validator])
+
+    # валидация всех входящих данных (аналог clean() в формах).
+    def validate(self, attrs):
+        password = attrs.get("password")
+        password_confirm = attrs.get("password_confirm")
+        if password and password_confirm and password != password_confirm:
+            raise ValidationError('Пароли не совпадают!')
+        return super().validate(attrs)
+
+    # валидация для одного поля (password, аналог clean_...() в формах).
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise ValidationError('Пароль должен быть длинее 8 символов')
+        return value
+
+    def create(self, validated_data):
+        user = User.objects.create(username=validated_data.get('username'))
+        user.set_password(validated_data.get("password"))
+        user.save()
+        return user
+
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'password_confirm')
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name', 'email')
