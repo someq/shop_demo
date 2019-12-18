@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from django.contrib.auth.models import User
 from django.test import TestCase
 from webapp.models import Order, Product
@@ -16,10 +14,10 @@ class OrderTest(TestCase):
         order = Order.objects.create(phone='123456')
         order.order_products.create(product=self.products[0], amount=10)
         total = order.get_total()
-        self.assertEqual(total, Decimal(100), f'Invalid amount, expected: 100, got: {total}')
+        self.assertEqual(total, 100, f'Invalid amount, expected: 100, got: {total}')
         order.order_products.create(product=self.products[1], amount=20)
         total = order.get_total()
-        self.assertEqual(total, Decimal(500), f'Invalid amount, expected: 500, got: {total}')
+        self.assertEqual(total, 500, f'Invalid amount, expected: 500, got: {total}')
 
 
 class ProductAddTest(TestCase):
