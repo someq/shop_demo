@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'webapp',
     'accounts',
     'api',
-    'api_v2'
+    'api_v2',
+    'behave_django'
 ]
 
 MIDDLEWARE = [
