@@ -154,3 +154,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     )
 }
+
+try:
+    from .settings_local import *
+except:
+    pass

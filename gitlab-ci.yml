@@ -1,0 +1,23 @@
+image: python:3.6
+
+stages:
+ - unit_test
+ - acc_test
+
+before_script:
+  - python -V
+  - pip install -r requirements.txt
+
+cache:
+  paths:
+    - ~/.cache/pip/
+
+run_unit_test:
+  stage: unit_test
+  script: python manage.py test --settings=main.settings_test
+
+run_acc_test:
+  stage: acc_test
+  services:
+    - selenium/standalone-chrome
+  script: python manage.py behave --settings=main.settings_test
